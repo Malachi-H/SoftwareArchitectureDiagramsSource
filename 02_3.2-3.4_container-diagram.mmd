@@ -1,0 +1,56 @@
+%% title Container diagram for TransitGo
+flowchart TD
+    classDef person fill:#08427b,stroke:#052e56,color:#fff
+    classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+    classDef container fill:#438dd5,stroke:#2e6295,color:#fff
+
+    commuter["Commuter<br/><i>Person</i>"]:::person
+    admin["App Administrator<br/><i>Person</i>"]:::person
+    payment["Payment Gateway<br/><i>External</i>"]:::ext
+    opfeeds["Transport Operator GPS/Schedule Feeds<br/><i>External</i>"]:::ext
+    mapdata["Map/Traffic Data Provider<br/><i>External</i>"]:::ext
+    notifyext["SMS/Email/Push Provider<br/><i>External</i>"]:::ext
+
+    subgraph TransitGo
+        direction TB
+        mobile["Commuter Mobile App"]:::container
+        adminportal["Admin Portal"]:::container
+        gateway["API Gateway"]:::container
+        idp["Identity Provider"]:::container
+        journey["Journey Planning Service"]:::container
+        tracking["Real-Time Tracking Service"]:::container
+        ticketing["Ticketing & Payments Service"]:::container
+        fraud["Fraud Detection Service"]:::container
+        notification["Notification Service"]:::container
+        analytics["Data Analytics Platform"]:::container
+        cache[("Live Position Cache")]:::container
+        store[("Ticketing/Payments Store")]:::container
+        lake[("Raw Events Data Lake")]:::container
+        bus["Event Bus"]:::container
+    end
+
+    commuter --> mobile
+    admin --> adminportal
+    mobile -->|HTTPS/REST| gateway
+    adminportal -->|HTTPS/REST| gateway
+    gateway -->|OIDC| idp
+    gateway -->|routes| journey
+    gateway -->|routes| tracking
+    gateway -->|routes| ticketing
+    gateway -->|routes| notification
+    gateway -->|reads| cache
+    journey -->|HTTPS/API| mapdata
+    tracking -->|API/MQTT| opfeeds
+    tracking -->|writes| cache
+    tracking -->|publishes| bus
+    ticketing -->|HTTPS/API| payment
+    ticketing -->|R/W| store
+    ticketing -->|sync score| fraud
+    ticketing -->|publishes| bus
+    bus -->|delivers| fraud
+    bus -->|streams| lake
+    fraud -->|flags| store
+    fraud -->|alerts| notification
+    lake -->|ETL/ELT| analytics
+    notification -->|sends| notifyext
+    notification -->|push| mobile

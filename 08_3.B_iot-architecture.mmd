@@ -1,0 +1,25 @@
+flowchart TB
+    subgraph EDGE["Edge Tier"]
+        direction TB
+        D1["Device Layer<br/>GPS tracker, ticket validator"]
+        C1["Communication Layer<br/>Cellular/LoRaWAN, local buffering"]
+        D1 --> C1
+    end
+
+    subgraph PLATFORM["Platform Tier"]
+        direction TB
+        C2["Communication Layer<br/>MQTT broker / API Gateway ingress"]
+        DA["Data Layer<br/>Event Bus, Raw Events Data Lake"]
+        F1["Function Layer<br/>Tracking, Ticketing, Fraud Detection"]
+        C2 --> DA --> F1
+    end
+
+    subgraph ENTERPRISE["Enterprise Tier"]
+        direction TB
+        P1["Process Layer<br/>Data Analytics Platform, Admin Portal"]
+        BIZ["Business Outcomes<br/>Ridership analytics, compliance reporting"]
+        P1 --> BIZ
+    end
+
+    C1 -->|cellular/API| C2
+    F1 -->|batch ETL, alerts| P1

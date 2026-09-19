@@ -1,0 +1,28 @@
+%% title Component diagram for Real-Time Tracking Service
+flowchart TD
+    classDef container fill:#438dd5,stroke:#2e6295,color:#fff
+    classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+    classDef component fill:#85bbf0,stroke:#5d82a8,color:#000
+
+    opfeeds["Transport Operator GPS/Schedule Feeds<br/><i>External</i>"]:::ext
+    gateway["API Gateway<br/><i>Container</i>"]:::container
+    cache[("Live Position Cache")]:::container
+    bus["Event Bus<br/><i>Container</i>"]:::container
+
+    subgraph RTS["Real-Time Tracking Service"]
+        direction TB
+        ingest["GPS Ingest Handler"]:::component
+        feedadapter["Feed Normalisation Adapter"]:::component
+        aggregator["Position Aggregator"]:::component
+        publisher["Event Publisher"]:::component
+        queryapi["Tracking Query API"]:::component
+    end
+
+    opfeeds -->|API/MQTT| ingest
+    ingest -->|raw messages| feedadapter
+    feedadapter -->|normalised position| aggregator
+    aggregator -->|vehicle state| publisher
+    publisher -->|writes| cache
+    publisher -->|publishes| bus
+    gateway -->|HTTPS/REST| queryapi
+    queryapi -->|reads| cache

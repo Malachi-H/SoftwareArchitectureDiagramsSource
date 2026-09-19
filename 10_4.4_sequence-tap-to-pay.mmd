@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant M as Commuter Mobile App
+    participant G as API Gateway
+    participant I as Identity Provider
+    participant T as Ticketing & Payments Service
+    participant F as Fraud Detection Service
+    participant P as Payment Gateway (external)
+    participant D as Ticketing/Payments Store
+
+    M->>I: Authenticate
+    I-->>M: Short-lived access token
+    M->>G: POST /validate-ticket [TLS]
+    G->>I: Validate token
+    I-->>G: Valid
+    G->>T: Forward request
+    T->>F: scoreEvent(commuterId, vehicleId, timestamp)
+    F-->>T: Risk score
+    T->>P: Authorise payment [TLS]
+    P-->>T: Approved
+    T->>D: Write ticket and payment
+    T-->>G: 200 OK
+    G-->>M: 200 OK

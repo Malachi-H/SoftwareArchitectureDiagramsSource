@@ -1,0 +1,20 @@
+%% title System Context diagram for TransitGo
+flowchart TD
+    classDef person fill:#08427b,stroke:#052e56,color:#fff
+    classDef system fill:#1168bd,stroke:#0b4884,color:#fff
+    classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+
+    commuter["Commuter<br/><i>Person</i>"]:::person
+    admin["App Administrator<br/><i>Person</i>"]:::person
+    transitgo["TransitGo<br/><i>Software System</i>"]:::system
+    payment["Payment Gateway<br/><i>External</i>"]:::ext
+    opfeeds["Transport Operator GPS/Schedule Feeds<br/><i>External</i>"]:::ext
+    mapdata["Map/Traffic Data Provider<br/><i>External</i>"]:::ext
+    notifyext["SMS/Email/Push Provider<br/><i>External</i>"]:::ext
+
+    commuter -->|"Plans journeys, buys tickets, receives live tickets & alerts [HTTPS/Push]"| transitgo
+    admin -->|"Configures fares, reviews fraud & ridership analytics [HTTPS]"| transitgo
+    transitgo -->|"Charges fares [HTTPS/API]"| payment
+    opfeeds -->|"Streams GPS and schedules [API/MQTT]"| transitgo
+    transitgo -->|"Requests routes/traffic [HTTPS/API]"| mapdata
+    transitgo -->|"Sends notifications [API]"| notifyext

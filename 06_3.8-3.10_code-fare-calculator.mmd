@@ -1,0 +1,48 @@
+classDiagram
+    class IFareCalculator {
+        <<interface>>
+        +calculateFare(trip: TripContext) FareAmount
+    }
+    class FareCalculatorImpl {
+        -ruleSet: FareRuleSet
+        -zoneMap: ZoneMap
+        -capTracker: FareCapTracker
+        +calculateFare(trip: TripContext) FareAmount
+    }
+    class FareRuleSet {
+        -rules: List~FareRule~
+        +getRuleFor(mode: String, zoneFrom: String, zoneTo: String) FareRule
+    }
+    class FareRule {
+        +mode: String
+        +baseFare: Money
+        +perZoneRate: Money
+    }
+    class ZoneMap {
+        +resolveZone(lat: double, lon: double) String
+    }
+    class FareCapTracker {
+        -commuterId: String
+        -periodTotal: Money
+        +applyCap(fare: Money, commuterId: String) Money
+    }
+    class TripContext {
+        +commuterId: String
+        +mode: String
+        +originStopId: String
+        +destinationStopId: String
+        +timestamp: DateTime
+    }
+    class FareAmount {
+        +amount: Money
+        +currency: String
+        +breakdown: List~String~
+    }
+
+    IFareCalculator <|.. FareCalculatorImpl : implements
+    FareCalculatorImpl --> FareRuleSet : uses
+    FareCalculatorImpl --> ZoneMap : uses
+    FareCalculatorImpl --> FareCapTracker : uses
+    FareCalculatorImpl ..> TripContext : depends on
+    FareCalculatorImpl ..> FareAmount : creates
+    FareRuleSet "1" *-- "many" FareRule : composed of

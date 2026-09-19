@@ -1,0 +1,33 @@
+%% title Component diagram for Ticketing & Payments Service
+flowchart TD
+    classDef container fill:#438dd5,stroke:#2e6295,color:#fff
+    classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+    classDef component fill:#85bbf0,stroke:#5d82a8,color:#000
+
+    gateway["API Gateway<br/><i>Container</i>"]:::container
+    store[("Ticketing/Payments Store")]:::container
+    bus["Event Bus<br/><i>Container</i>"]:::container
+    fraud["Fraud Detection Service<br/><i>Container</i>"]:::container
+    payment["Payment Gateway<br/><i>External</i>"]:::ext
+
+    subgraph TPS["Ticketing & Payments Service"]
+        direction TB
+        api["Ticketing API Layer"]:::component
+        rules["Validation Rules Engine"]:::component
+        farecalc["Fare Calculator"]:::component
+        fraudclient["Fraud Client"]:::component
+        payadapter["Payment Adapter"]:::component
+        issuer["Ticket Issuer"]:::component
+    end
+
+    gateway -->|HTTPS/REST| api
+    api -->|validates| rules
+    rules -->|fare| farecalc
+    farecalc -->|reads zone data| store
+    rules -->|risk score| fraudclient
+    fraudclient -->|HTTPS/REST| fraud
+    rules -->|capture| payadapter
+    payadapter -->|HTTPS/API| payment
+    rules -->|issue| issuer
+    issuer -->|writes| store
+    issuer -->|publishes| bus

@@ -1,0 +1,28 @@
+graph TD
+    MA[Commuter Mobile App] --> CDN[Managed CDN] --> GW[Managed API Gateway]
+    AP[Admin Portal] --> GW
+    GW --> IDP[(Managed Identity Provider)]
+    subgraph ORCH["Managed Container Orchestration Cluster"]
+        subgraph "AZ 1"
+            C1["Ticketing, Fraud Detection<br/>(Docker containers)"]
+        end
+        subgraph "AZ 2"
+            C2["Journey Planning, Tracking, Notification<br/>(Docker containers)"]
+        end
+    end
+    GW --> C1
+    GW --> C2
+    subgraph "Managed data services"
+        DB[(Relational DB)]
+        CACHE[(Live Position Cache)]
+        BUS[[Event Bus]]
+        LAKE[(Raw Events Data Lake)]
+        DW[(Data Warehouse)]
+    end
+    C1 --> DB
+    C1 --> BUS
+    C2 --> CACHE
+    C2 --> BUS
+    BUS --> LAKE --> DW
+    C1 -.-> EXT1[External: Payment Gateway]
+    C2 -.-> EXT2[External: Operator GPS Feeds]

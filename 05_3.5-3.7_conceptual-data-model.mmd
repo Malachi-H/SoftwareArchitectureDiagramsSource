@@ -1,0 +1,8 @@
+erDiagram
+    COMMUTER ||--o{ TICKET : purchases
+    COMMUTER ||--o{ PAYMENT : makes
+    TICKET ||--|| PAYMENT : "paid by"
+    TICKET ||--o{ VALIDATION_EVENT : "validated by"
+    VEHICLE ||--o{ VEHICLE_POSITION : reports
+    VALIDATION_EVENT }o--|| VEHICLE : "occurs on"
+    VALIDATION_EVENT ||--o| FRAUD_EVENT : "may raise"
