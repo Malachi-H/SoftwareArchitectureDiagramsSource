@@ -4,25 +4,35 @@ graph TD
     GW --> IDP[(Managed Identity Provider)]
     subgraph ORCH["Managed Container Orchestration Cluster"]
         subgraph "AZ 1"
-            C1["Ticketing, Fraud Detection<br/>(Docker containers)"]
+            C1a["Ticketing, Fraud Detection<br/>(Docker containers)"]
+            C2a["Journey Planning, Tracking, Notification<br/>(Docker containers)"]
         end
         subgraph "AZ 2"
-            C2["Journey Planning, Tracking, Notification<br/>(Docker containers)"]
+            C1b["Ticketing, Fraud Detection<br/>(Docker containers)"]
+            C2b["Journey Planning, Tracking, Notification<br/>(Docker containers)"]
         end
     end
-    GW --> C1
-    GW --> C2
+    GW --> C1a
+    GW --> C2a
+    GW --> C1b
+    GW --> C2b
     subgraph "Managed data services"
-        DB[(Relational DB)]
+        DB[(Relational DB<br/>Primary + Standby Replica)]
         CACHE[(Live Position Cache)]
         BUS[[Event Bus]]
         LAKE[(Raw Events Data Lake)]
         DW[(Data Warehouse)]
     end
-    C1 --> DB
-    C1 --> BUS
-    C2 --> CACHE
-    C2 --> BUS
+    C1a --> DB
+    C1b --> DB
+    C1a --> BUS
+    C1b --> BUS
+    C2a --> CACHE
+    C2b --> CACHE
+    C2a --> BUS
+    C2b --> BUS
     BUS --> LAKE --> DW
-    C1 -.-> EXT1[External: Payment Gateway]
-    C2 -.-> EXT2[External: Operator GPS Feeds]
+    C1a -.-> EXT1[External: Payment Gateway]
+    C1b -.-> EXT1
+    C2a -.-> EXT2[External: Operator GPS Feeds]
+    C2b -.-> EXT2

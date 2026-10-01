@@ -22,8 +22,6 @@ classDiagram
         +resolveZone(lat: double, lon: double) String
     }
     class FareCapTracker {
-        -commuterId: String
-        -periodTotal: Money
         +applyCap(fare: Money, commuterId: String) Money
     }
     class TripContext {

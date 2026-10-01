@@ -38,9 +38,8 @@ flowchart TD
     gateway -->|routes| tracking
     gateway -->|routes| ticketing
     gateway -->|routes| notification
-    gateway -->|reads| cache
-    journey -->|HTTPS/API| mapdata
-    tracking -->|API/MQTT| opfeeds
+    gateway -->|routes, fraud monitoring| fraud
+    gateway -->|routes, ridership analytics| analytics
     tracking -->|writes| cache
     tracking -->|publishes| bus
     ticketing -->|HTTPS/API| payment
