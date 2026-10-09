@@ -11,6 +11,7 @@ flowchart TD
     opfeeds["Transport Operator GPS/Schedule Feeds<br/><i>External</i>"]:::ext
     mapdata["Map/Traffic Data Provider<br/><i>External</i>"]:::ext
     notifyext["SMS/Email/Push Provider<br/><i>External</i>"]:::ext
+    analyticsext["Transport NSW Analytics & Reporting System<br/><i>External</i>"]:::ext
 
     commuter -->|"Plans journeys, buys tickets, receives live tickets & alerts [HTTPS/Push]"| transitgo
     admin -->|"Configures fares, reviews fraud & ridership analytics [HTTPS]"| transitgo
@@ -18,3 +19,4 @@ flowchart TD
     opfeeds -->|"Streams GPS and schedules [API/MQTT]"| transitgo
     transitgo -->|"Requests routes/traffic [HTTPS/API]"| mapdata
     transitgo -->|"Sends notifications [API]"| notifyext
+    transitgo -->|"Exports curated ridership, revenue & fraud data [Batch ETL/HTTPS]"| analyticsext

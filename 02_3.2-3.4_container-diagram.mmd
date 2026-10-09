@@ -10,6 +10,7 @@ flowchart TD
     opfeeds["Transport Operator GPS/Schedule Feeds<br/><i>External</i>"]:::ext
     mapdata["Map/Traffic Data Provider<br/><i>External</i>"]:::ext
     notifyext["SMS/Email/Push Provider<br/><i>External</i>"]:::ext
+    analyticsext["Transport NSW Analytics & Reporting System<br/><i>External</i>"]:::ext
 
     subgraph TransitGo
         direction TB
@@ -53,3 +54,4 @@ flowchart TD
     lake -->|ETL/ELT| analytics
     notification -->|sends| notifyext
     notification -->|push| mobile
+    analytics -->|"exports curated reports [Batch ETL/HTTPS]"| analyticsext
