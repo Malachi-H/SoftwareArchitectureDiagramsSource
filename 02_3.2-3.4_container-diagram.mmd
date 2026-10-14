@@ -23,9 +23,10 @@ flowchart TD
         ticketing["Ticketing & Payments Service"]:::container
         fraud["Fraud Detection Service"]:::container
         notification["Notification Service"]:::container
-        analytics["Data Analytics Platform"]:::container
+        analytics[("Data Warehouse")]:::container
         cache[("Live Position Cache")]:::container
         store[("Ticketing/Payments Store")]:::container
+        backup[("Backup Storage")]:::container
         lake[("Raw Events Data Lake")]:::container
         bus["Event Bus"]:::container
     end
@@ -51,7 +52,9 @@ flowchart TD
     bus -->|streams| lake
     fraud -->|flags| store
     fraud -->|alerts| notification
-    lake -->|ETL/ELT| analytics
+    lake -->|Batch ETL| analytics
+    store -->|Batch ETL| analytics
+    store -->|automated backups, PITR| backup
     notification -->|sends| notifyext
     notification -->|push| mobile
     analytics -->|"exports curated reports [Batch ETL/HTTPS]"| analyticsext
